@@ -1,0 +1,102 @@
+syntax = "proto3";
+package pb;
+option go_package="./;pb";
+
+message RpcHeader {
+  string uuid = 1;
+  string token = 2;
+}
+
+message rpc_param{
+  string app_key = 1;
+  string data = 2;
+}
+
+message rpc_resp {
+  int32 code = 1;
+  string message = 2;
+  string data = 3;
+}
+
+message LoginReq {
+  RpcHeader header = 1;
+  string user_name = 2; //用户名
+  string password = 3; //密码
+}
+
+message UserRoleMenuReq {
+  RpcHeader header = 1;
+  int64 role_id = 2; //角色ID
+}
+message UserListReq {
+  RpcHeader header = 1;
+  int64 role_id = 2; //角色ID
+  string user_name = 3;
+  string login_name = 4;
+  int64 job_num = 5;
+}
+
+message UserListResp {
+  int64 total = 2;
+  repeated AdminUserInfo list = 4;
+}
+
+message AdminUser{
+  RpcHeader header = 1;
+  int64 user_id = 2; //用户ID
+  string user_name = 3; //姓名
+  string user_phone = 4;//手机号
+  string user_email = 5; //邮箱
+  string nick_name = 6; //昵称
+  string avatar = 7; //头像
+  int32 sex = 8; //性别
+  repeated AdminRole roles = 9; //角色ID列表
+  repeated string permissions = 10; //权限字符列表
+}
+
+message AdminUserInfo{
+  int64 user_id = 2; //用户ID
+  string user_name = 3; //姓名
+  string user_phone = 4;//手机号
+  string user_email = 5; //邮箱
+  string nick_name = 6; //昵称
+  string avatar = 7; //头像
+  int32 sex = 8; //性别
+}
+message AdminRole{
+  int64 role_id = 2; //角色ID
+  string role_name = 3; //角色名称
+}
+
+message MenuTreeModel {
+  int64 id = 1;
+  string name = 2;
+  string name_en = 3;
+  string icon = 4;
+  string path = 5;
+  bool hidden = 6;
+  string redirect = 7;
+  string component = 8;
+  string query = 9;
+  bool always_show = 10;
+  repeated MenuTreeModel children = 12;
+}
+
+service system_service {
+  //用户登陆
+  rpc Login(rpc_param) returns (rpc_resp) {}
+  //用户退出登陆
+  rpc Logout(rpc_param) returns (rpc_resp) {}
+  //验证token
+  rpc CheckToken(rpc_param) returns (rpc_resp) {}
+  //获取用户角色列表
+  rpc GetUserRoles(rpc_param) returns (rpc_resp){}
+  //查询用户权限列表
+  rpc GetUserPermissions(rpc_param) returns (rpc_resp){}
+  //查询用户菜单列表
+  rpc GetUserMenu(rpc_param) returns (rpc_resp) {}
+  //查询角色菜单列表
+  rpc GetRoleMenu(rpc_param) returns (rpc_resp) {}
+  // 查询角色下的用户列表
+  rpc UserList(rpc_param) returns (rpc_resp) {}
+}
